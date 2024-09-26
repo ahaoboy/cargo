@@ -603,13 +603,13 @@ fn render_rustc_info(bcx: &BuildContext<'_, '_>) -> String {
     )
 }
 
-static HTML_TMPL: &str = r#"
+static HTML_TMPL: &str = r##"
 <html>
 <head>
   <title>Cargo Build Timings — {ROOTS}</title>
   <meta charset="utf-8">
 <style type="text/css">
-:root {
+.light-mode {
   --error-text: #e80000;
   --text: #000;
   --background: #fff;
@@ -635,30 +635,58 @@ static HTML_TMPL: &str = r#"
   --canvas-cpu: rgba(250, 119, 0, 0.2)
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #fff;
-    --background: #121212;
-    --h1-border-bottom: #444;
-    --table-box-shadow: rgba(255, 255, 255, 0.1);
-    --table-th: #a0a0a0;
-    --table-th-background: #2c2c2c;
-    --table-th-border-bottom: #555;
-    --table-th-border-right: #444;
-    --table-tr-border-top: #333;
-    --table-tr-border-bottom: #333;
-    --table-tr-odd-background: #1e1e1e;
-    --table-td-background: #262626;
-    --table-td-border-right: #333;
-    --canvas-background: #1a1a1a;
-    --canvas-axes: #b0b0b0;
-    --canvas-grid: #333;
-    --canvas-dep-line: #444;
-    --canvas-dep-line-highlighted: #fff;
-  }
+.dark-mode {
+  --text: #fff;
+  --background: #121212;
+  --h1-border-bottom: #444;
+  --table-box-shadow: rgba(255, 255, 255, 0.1);
+  --table-th: #a0a0a0;
+  --table-th-background: #2c2c2c;
+  --table-th-border-bottom: #555;
+  --table-th-border-right: #444;
+  --table-tr-border-top: #333;
+  --table-tr-border-bottom: #333;
+  --table-tr-odd-background: #1e1e1e;
+  --table-td-background: #262626;
+  --table-td-border-right: #333;
+  --canvas-background: #1a1a1a;
+  --canvas-axes: #b0b0b0;
+  --canvas-grid: #333;
+  --canvas-dep-line: #444;
+  --canvas-dep-line-highlighted: #fff;
 }
 
-html {
+#mode-toggle {
+  color: var(--button-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+#mode-toggle svg:last-child {
+  display: none;
+}
+
+#mode-toggle svg{
+  fill: var(--text);
+}
+
+.dark-mode #mode-toggle svg:first-child {
+  display: none;
+}
+
+.dark-mode #mode-toggle svg:last-child {
+  display: block;
+}
+
+.header{
+  display: flex;
+  width: 100%;
+  align-content: center;
+}
+
+body {
   font-family: sans-serif;
   color: var(--text);
   background: var(--background);
@@ -764,9 +792,18 @@ h1 {
 </head>
 <body>
 
-<h1>Cargo Build Timings</h1>
+<div class="header">
+  <h1>Cargo Build Timings</h1>
+  &nbsp;&nbsp;
+  <div id="mode-toggle">
+    <!-- moon -->
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-120q-150 0-255-105T120-480q0-150 105-255t255-105q14 0 27.5 1t26.5 3q-41 29-65.5 75.5T444-660q0 90 63 153t153 63q55 0 101-24.5t75-65.5q2 13 3 26.5t1 27.5q0 150-105 255T480-120Z"/></svg>
+    <!-- sun -->
+    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-280q-83 0-141.5-58.5T280-480q0-83 58.5-141.5T480-680q83 0 141.5 58.5T680-480q0 83-58.5 141.5T480-280ZM200-440H40v-80h160v80Zm720 0H760v-80h160v80ZM440-760v-160h80v160h-80Zm0 720v-160h80v160h-80ZM256-650l-101-97 57-59 96 100-52 56Zm492 496-97-101 53-55 101 97-57 59Zm-98-550 97-101 59 57-100 96-56-52ZM154-212l101-97 55 53-97 101-59-57Z"/></svg>
+  </div>
+</div>
 See <a href="https://doc.rust-lang.org/nightly/cargo/reference/timings.html">Documentation</a>
-"#;
+"##;
 
 static HTML_CANVAS: &str = r#"
 <table class="input-table">
